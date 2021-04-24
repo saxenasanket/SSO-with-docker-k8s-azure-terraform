@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sso-consumer-two-svc
+spec:
+  selector:
+    component: sso-consumer-two
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3030
+   

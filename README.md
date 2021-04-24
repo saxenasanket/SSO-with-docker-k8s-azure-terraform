@@ -1,6 +1,7 @@
 # A simple implementation of single sign-on (SSO) central authorization unit and client in 500 lines of Node.js
 
 ### Important
+
 To Run these examples you need to add the below entry inside your `/etc/hosts` file in linux
 
 ```
@@ -51,7 +52,7 @@ const isAuthenticated = (req, res, next) => {
   const redirectURL = `${req.protocol}://${req.headers.host}${req.path}`;
   if (req.session.user == null) {
     return res.redirect(
-      `http://sso.ankuranand.com:3010/simplesso/login?serviceURL=${redirectURL}`
+      `http://localhost:5001/simplesso/login?serviceURL=${redirectURL}`
     );
   }
   next();
@@ -90,7 +91,7 @@ const login = (req, res, next) => {
   }
 
   return res.render("login", {
-    title: "SSO-Server | Login"
+    title: "SSO-Server | Login",
   });
 };
 ```
@@ -99,12 +100,12 @@ const login = (req, res, next) => {
 We are checking if the serviceURL that has came as query to the ‘sso-server’ has been registered to use the sso-server’ or not.
 
 ```javascript
-    const alloweOrigin = {
-    "http://consumer.ankuranand.in:3020": true,
-    "http://consumertwo.ankuranand.in:3030": true,
-    "http://test.tangledvibes.com:3080": true,
-    "http://blog.tangledvibes.com:3080": fasle,
-    };
+const alloweOrigin = {
+  "sso-consumer-container": true,
+  "http://consumertwo.ankuranand.in:3030": true,
+  "http://test.tangledvibes.com:3080": true,
+  "http://blog.tangledvibes.com:3080": fasle,
+};
 ```
 
 **3.** User enters username and password to submit login request.
@@ -141,8 +142,9 @@ const doLogin = (req, res, next) => {
 ```
 
 **Extra Security Pointers:**
-* Always consider this token as intermediate token and exchange the real data using this token.
-* If you are using JWT as the intermediate token please avoid sharing any critical data over this JWT.*
+
+- Always consider this token as intermediate token and exchange the real data using this token.
+- If you are using JWT as the intermediate token please avoid sharing any critical data over this JWT.\*
 
 **6**. The ‘sso-consumer’ gets the token and goes to the ‘sso-server’ authentication to check if the token is valid.The ‘SSO-SERVER’ verifies the token and return another token with user information to the “sso-consumer”. The “sso-consumer” uses this token to create a session with the user. **This session is called local session.**
 
@@ -150,7 +152,7 @@ Here is a brief sso-consumer middle-ware inside the “sso-consumer” applicati
 
 ```javascript
 const ssoRedirect = () => {
-  return async function(req, res, next) {
+  return async function (req, res, next) {
     // check if the req has the queryParameter as ssoToken
     // and who is the referer.
     const { ssoToken } = req.query;
@@ -162,8 +164,8 @@ const ssoRedirect = () => {
           `${ssoServerJWTURL}?ssoToken=${ssoToken}`,
           {
             headers: {
-              Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL"
-            }
+              Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL",
+            },
           }
         );
         const { token } = response.data;
@@ -224,8 +226,9 @@ const verifySsoToken = async (req, res, next) => {
 ```
 
 **Extra Security Pointers:**
-* Inside “sso-server” register each application that’s going to use the sso-server for authentication and give them some sort of verification header while making a request. This establishes a better security between consumer and “sso-server”.
-* You can also generate different “private” and “public” rsa file for each application and let each application verify their JWT with their respective Public Key at the consumer side.*
+
+- Inside “sso-server” register each application that’s going to use the sso-server for authentication and give them some sort of verification header while making a request. This establishes a better security between consumer and “sso-server”.
+- You can also generate different “private” and “public” rsa file for each application and let each application verify their JWT with their respective Public Key at the consumer side.\*
 
 You can also define application-level policy at the centralized place.
 
@@ -236,9 +239,9 @@ const userDB = {
     userId: encodedId(), // incase you dont want to share the user-email.
     appPolicy: {
       sso_consumer: { role: "admin", shareEmail: true },
-      simple_sso_consumer: { role: "user", shareEmail: false }
-    }
-  }
+      simple_sso_consumer: { role: "user", shareEmail: false },
+    },
+  },
 };
 ```
 
@@ -278,4 +281,5 @@ Similarly we can implement the “Logout”, just we need to consider these thre
 ---
 
 ### sso-server is our central authorization unit
+
 ### sso-consumer is how different consumer can be implemented to talk with sso-server and use sso feature.

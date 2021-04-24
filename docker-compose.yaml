@@ -1,0 +1,65 @@
+version: "3"
+services:
+  reverseproxy:
+    image: ssoacr1.azurecr.io/reverseproxy
+    build:
+      context: ./nginx
+    ports:
+        - 8030:80
+    restart: always
+    networks:
+      - sso
+
+  sso-server:
+    depends_on:
+      - reverseproxy
+    image: ssoacr1.azurecr.io/sso-server
+    container_name: sso-server
+    restart: always
+    build:
+      context: ./sso-server
+    ports:
+      - 5001:3010
+    # volumes:
+    #   - ./sso-server:/usr/src/app
+    #   - /usr/src/app/node_modules
+    networks:
+      - sso
+
+  sso-consumer:
+    depends_on:
+      - reverseproxy
+    image: ssoacr1.azurecr.io/sso-consumer
+    container_name: sso-consumer
+    restart: always
+    build:
+      context: ./sso-consumer
+    ports:
+      - 5002:3020
+    # volumes:
+    #   - ./sso-consumer:/usr/src/app
+    #   - /usr/src/app/node_modules
+    networks:
+      - sso
+
+  sso-consumer-two:
+    depends_on:
+      - reverseproxy
+    image: ssoacr1.azurecr.io/sso-consumer-two
+    container_name: sso-consumer-two
+    restart: always
+    build:
+      context: ./sso-consumer-two
+    ports:
+      - 5003:3030
+    # volumes:
+    #   - ./sso-consumer-two:/usr/src/app
+    #   - /usr/src/app/node_modules
+    networks:
+      - sso
+
+# If you want your containers to join a pre-existing network, use the external option:
+
+
+networks:
+  sso:

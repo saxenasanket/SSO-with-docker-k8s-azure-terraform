@@ -5,7 +5,7 @@ const isAuthenticated = (req, res, next) => {
   // serviceURL is where the sso should redirect in case of valid user
 
   // const redirectURL = `${req.protocol}://${req.headers.host}${req.path}`;
-  const redirectURL = `http://ssoconsumer.sanketsaxena.in`;
+  const redirectURL = `http://ssoconsumertwo.sanketsaxena.in`;
 
   if (req.session.user == null) {
     return res.redirect(

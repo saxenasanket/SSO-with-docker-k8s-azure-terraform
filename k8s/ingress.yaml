@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: letsencrypt 
+spec:  
+  rules:
+  - host: sso.sanketsaxena.in
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: sso-server-svc
+          servicePort: 80
+  - host: ssoconsumer.sanketsaxena.in
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: sso-consumer-svc
+          servicePort: 80
+
+  - host: ssoconsumertwo.sanketsaxena.in
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: sso-consumer-two-svc
+          servicePort: 80
+
+  tls:
+  - hosts:
+    - sso.sanketsaxena.in
+    secretName: sso-sanketsaxena-secret           
+  - hosts:
+    - ssoconsumer.sanketsaxena.in
+    secretName: ssoconsumer-sanketsaxena-secret           

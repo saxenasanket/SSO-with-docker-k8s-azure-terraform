@@ -11,6 +11,8 @@ const re = /(\S+)\s+(\S+)/;
 const AUTH_HEADER = "authorization";
 const BEARER_AUTH_SCHEME = "bearer";
 
+
+
 function parseAuthHeader(hdrValue) {
   if (typeof hdrValue !== "string") {
     return null;
@@ -19,12 +21,16 @@ function parseAuthHeader(hdrValue) {
   return matches && { scheme: matches[1], value: matches[2] };
 }
 
-const fromAuthHeaderWithScheme = function(authScheme) {
+const fromAuthHeaderWithScheme = function (authScheme) {
   const authSchemeLower = authScheme.toLowerCase();
-  return function(request) {
+  return function (request) {
     let token = null;
+
+    
     if (request.headers[AUTH_HEADER]) {
       const authParams = parseAuthHeader(request.headers[AUTH_HEADER]);
+
+      
       if (authParams && authSchemeLower === authParams.scheme.toLowerCase()) {
         token = authParams.value;
       }
@@ -33,7 +39,7 @@ const fromAuthHeaderWithScheme = function(authScheme) {
   };
 };
 
-const fromAuthHeaderAsBearerToken = function() {
+const fromAuthHeaderAsBearerToken = function () {
   return fromAuthHeaderWithScheme(BEARER_AUTH_SCHEME);
 };
 
@@ -42,13 +48,14 @@ const appTokenFromRequest = fromAuthHeaderAsBearerToken();
 // app token to validate the request is coming from the authenticated server only.
 const appTokenDB = {
   sso_consumer: "l1Q7zkOL59cRqWBkQ12ZiGVW2DBL",
-  simple_sso_consumer: "1g0jJwGmRQhJwvwNOrY4i90kD0m"
+  simple_sso_consumer: "1g0jJwGmRQhJwvwNOrY4i90kD0m",
+  sso_consumer_sanket: "l1Q7zkOL59cRqWBkQ12ZiGVW2DB8",
 };
 
 const alloweOrigin = {
-  "http://consumer.ankuranand.in:3020": true,
-  "http://consumertwo.ankuranand.in:3030": true,
-  "http://sso.ankuranand.in:3080": false
+  "http://ssoconsumer.sanketsaxena.in": true,
+  "http://ssoconsumertwo.sanketsaxena.in": true,
+  "http://sso.ankuranand.in:3080": false,
 };
 
 const deHyphenatedUUID = () => uuidv4().replace(/-/gi, "");
@@ -60,8 +67,9 @@ const sessionUser = {};
 const sessionApp = {};
 
 const originAppName = {
-  "http://consumer.ankuranand.in:3020": "sso_consumer",
-  "http://consumertwo.ankuranand.in:3030": "simple_sso_consumer"
+  "http://ssoconsumer.sanketsaxena.in": "sso_consumer",
+  // "http://consumertwo.ankuranand.in:3030": "simple_sso_consumer",
+  "http://ssoconsumertwo.sanketsaxena.in": "sso_consumer_sanket",
 };
 
 const userDB = {
@@ -70,9 +78,18 @@ const userDB = {
     userId: encodedId(), // incase you dont want to share the user-email.
     appPolicy: {
       sso_consumer: { role: "admin", shareEmail: true },
-      simple_sso_consumer: { role: "user", shareEmail: false }
-    }
-  }
+      simple_sso_consumer: { role: "user", shareEmail: false },
+    },
+  },
+
+  "saxenasanket135@gmail.com": {
+    password: "sanket100",
+    userId: encodedId(), // incase you dont want to share the user-email.
+    appPolicy: {
+      sso_consumer: { role: "user", shareEmail: true },
+      sso_consumer_sanket: { role: "admin", shareEmail: true },
+    },
+  },
 };
 
 // these token are for the validation purpose
@@ -81,20 +98,27 @@ const intrmTokenCache = {};
 const fillIntrmTokenCache = (origin, id, intrmToken) => {
   intrmTokenCache[intrmToken] = [id, originAppName[origin]];
 };
+
 const storeApplicationInCache = (origin, id, intrmToken) => {
+  
   if (sessionApp[id] == null) {
     sessionApp[id] = {
-      [originAppName[origin]]: true
+      [originAppName[origin]]: true,
     };
     fillIntrmTokenCache(origin, id, intrmToken);
   } else {
     sessionApp[id][originAppName[origin]] = true;
     fillIntrmTokenCache(origin, id, intrmToken);
   }
-  console.log({ ...sessionApp }, { ...sessionUser }, { intrmTokenCache });
+  
+    "check 6",
+    { ...sessionApp },
+    { ...sessionUser },
+    { intrmTokenCache }
+  );
 };
 
-const generatePayload = ssoToken => {
+const generatePayload = (ssoToken) => {
   const globalSessionToken = intrmTokenCache[ssoToken][0];
   const appName = intrmTokenCache[ssoToken][1];
   const userEmail = sessionUser[globalSessionToken];
@@ -108,15 +132,20 @@ const generatePayload = ssoToken => {
       shareEmail: undefined,
       uid: user.userId,
       // global SessionID for the logout functionality.
-      globalSessionID: globalSessionToken
-    }
+      globalSessionID: globalSessionToken,
+    },
   };
   return payload;
 };
 
 const verifySsoToken = async (req, res, next) => {
+  
+  // 
   const appToken = appTokenFromRequest(req);
   const { ssoToken } = req.query;
+
+  
+  
   // if the application token is not present or ssoToken request is invalid
   // if the ssoToken is not present in the cache some is
   // smart.
@@ -132,6 +161,16 @@ const verifySsoToken = async (req, res, next) => {
   const appName = intrmTokenCache[ssoToken][1];
   const globalSessionToken = intrmTokenCache[ssoToken][0];
   // If the appToken is not equal to token given during the sso app registraion or later stage than invalid
+
+  
+    "check 7",
+    appName,
+    globalSessionToken,
+    intrmTokenCache,
+    appToken,
+    appTokenDB
+  );
+
   if (
     appToken !== appTokenDB[appName] ||
     sessionApp[globalSessionToken][appName] !== true
@@ -141,9 +180,18 @@ const verifySsoToken = async (req, res, next) => {
   // checking if the token passed has been generated
   const payload = generatePayload(ssoToken);
 
+  
+
   const token = await genJwtToken(payload);
+
   // delete the itremCache key for no futher use,
   delete intrmTokenCache[ssoToken];
+
+  
+  
+  
+  
+
   return res.status(200).json({ token });
 };
 const doLogin = (req, res, next) => {
@@ -151,6 +199,8 @@ const doLogin = (req, res, next) => {
   // but the goal is not to do the same in this right now,
   // like checking with Datebase and all, we are skiping these section
   const { email, password } = req.body;
+
+  
   if (!(userDB[email] && password === userDB[email].password)) {
     return res.status(404).json({ message: "Invalid email and password" });
   }
@@ -160,12 +210,16 @@ const doLogin = (req, res, next) => {
   const id = encodedId();
   req.session.user = id;
   sessionUser[id] = email;
+
+  
   if (serviceURL == null) {
     return res.redirect("/");
   }
   const url = new URL(serviceURL);
   const intrmid = encodedId();
   storeApplicationInCache(url.origin, id, intrmid);
+
+  
   return res.redirect(`${serviceURL}?ssoToken=${intrmid}`);
 };
 
@@ -175,9 +229,11 @@ const login = (req, res, next) => {
   // This can also be used to verify the origin from where the request has came in
   // for the redirection
   const { serviceURL } = req.query;
+  
   // direct access will give the error inside new URL.
   if (serviceURL != null) {
     const url = new URL(serviceURL);
+
     if (alloweOrigin[url.origin] !== true) {
       return res
         .status(400)
@@ -189,6 +245,7 @@ const login = (req, res, next) => {
   }
   // if global session already has the user directly redirect with the token
   if (req.session.user != null && serviceURL != null) {
+    
     const url = new URL(serviceURL);
     const intrmid = encodedId();
     storeApplicationInCache(url.origin, req.session.user, intrmid);
@@ -196,7 +253,7 @@ const login = (req, res, next) => {
   }
 
   return res.render("login", {
-    title: "SSO-Server | Login"
+    title: "SSO-Server | Login",
   });
 };
 

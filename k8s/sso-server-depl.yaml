@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sso-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: sso-server
+  template:
+    metadata:
+      labels:
+        component: sso-server
+    spec:
+      containers:
+        - name: sso-server
+          image: ssoacr1.azurecr.io/sso-server
+          ports:
+            - containerPort: 3020
+          imagePullPolicy: IfNotPresent

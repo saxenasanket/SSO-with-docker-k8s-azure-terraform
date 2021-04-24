@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "nodemon  index.js -e ejs,js,css,html,jpg,png,scss"
   },
   "keywords": [
     "sso",
@@ -23,6 +23,7 @@
     "hashids": "^1.2.2",
     "jsonwebtoken": "^8.3.0",
     "morgan": "^1.9.0",
+    "nodemon": "^2.0.7",
     "uuid": "^3.4.0"
   }
 }

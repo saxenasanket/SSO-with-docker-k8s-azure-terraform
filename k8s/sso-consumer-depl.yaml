@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sso-consumer-deployment
+spec:
+  replicas: 1
+  
+  selector:
+    matchLabels:
+      component: sso-consumer
+  template:
+    metadata:
+      labels:
+        component: sso-consumer
+    spec:
+      containers:
+        - name: sso-consumer
+          image: ssoacr1.azurecr.io/sso-consumer
+          ports:
+            - containerPort: 3020
+          imagePullPolicy: IfNotPresent

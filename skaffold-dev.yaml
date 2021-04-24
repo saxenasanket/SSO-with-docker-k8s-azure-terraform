@@ -1,0 +1,26 @@
+apiVersion: skaffold/v2beta13
+kind: Config
+metadata:
+  name: analytics-platform-beta-release
+build:
+  tagPolicy:
+    sha256: {}
+  local:
+    push: true
+    useDockerCLI: true
+    concurrency: 10
+  artifacts:
+    - image: ssoacr1.azurecr.io/sso-server
+      context: sso-server
+    - image: ssoacr1.azurecr.io/sso-consumer
+      context: sso-consumer
+    - image: ssoacr1.azurecr.io/sso-consumer-two
+      context: sso-consumer-two
+ 
+deploy:
+  kubectl:
+    manifests:
+      - k8s/sso-server-depl.yaml
+      - k8s/sso-consumer-depl.yaml
+      - k8s/sso-consumer-two-depl.yaml
+

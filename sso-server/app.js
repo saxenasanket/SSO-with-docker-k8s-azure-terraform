@@ -4,6 +4,9 @@ const app = express();
 const engine = require("ejs-mate");
 const session = require("express-session");
 const router = require("./router");
+// const Logger = require("@ptkdev/logger");
+// const logger = new Logger();
+// logger.info("message");
 
 app.use(
   session({
@@ -13,7 +16,8 @@ app.use(
   })
 );
 app.use((req, res, next) => {
-  console.log(req.session);
+  // logger.info("test");
+
   next();
 });
 app.use(express.urlencoded({ extended: true }));
