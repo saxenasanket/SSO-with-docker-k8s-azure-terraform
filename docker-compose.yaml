@@ -1,18 +1,17 @@
 version: "3"
 services:
-  reverseproxy:
-    image: ssoacr1.azurecr.io/reverseproxy
-    build:
-      context: ./nginx
-    ports:
-        - 8030:80
-    restart: always
-    networks:
-      - sso
+  # reverseproxy:
+  #   image: ssoacr1.azurecr.io/reverseproxy
+  #   build:
+  #     context: ./nginx
+  #   ports:
+  #       - 8030:80
+  #   restart: always
+  #   networks:
+  #     - sso
 
   sso-server:
-    depends_on:
-      - reverseproxy
+    
     image: ssoacr1.azurecr.io/sso-server
     container_name: sso-server
     restart: always
@@ -27,8 +26,7 @@ services:
       - sso
 
   sso-consumer:
-    depends_on:
-      - reverseproxy
+    
     image: ssoacr1.azurecr.io/sso-consumer
     container_name: sso-consumer
     restart: always
@@ -43,8 +41,7 @@ services:
       - sso
 
   sso-consumer-two:
-    depends_on:
-      - reverseproxy
+    
     image: ssoacr1.azurecr.io/sso-consumer-two
     container_name: sso-consumer-two
     restart: always

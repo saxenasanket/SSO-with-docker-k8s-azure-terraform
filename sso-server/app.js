@@ -7,6 +7,8 @@ const router = require("./router");
 // const Logger = require("@ptkdev/logger");
 // const logger = new Logger();
 // logger.info("message");
+const { User } = require("./sequelize");
+const { validate, ValidationError, Joi } = require("express-validation");
 
 app.use(
   session({
@@ -28,6 +30,23 @@ app.engine("ejs", engine);
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 
+// app.get("/users", (req, res, next) => {
+//   User.findAll().then((users) => res.json(users));
+// });
+
+// app.post("/users", (req, res, next) => {
+//   User.create({
+//     firstName: req.body.firstName,
+//     lastName: req.body.lastName,
+//     email: req.body.email,
+//   })
+//     .then(function (note) {
+//       res.json(note);
+//     })
+//     .catch((err) => console.log("error", err));
+// });
+
+app.use("/users", router);
 app.use("/simplesso", router);
 app.get("/", (req, res, next) => {
   const user = req.session.user || "unlogged";
@@ -49,6 +68,10 @@ app.use((err, req, res, next) => {
     message: err.message,
     error: err,
   });
+
+  if (err instanceof ValidationError) {
+    return res.status(err.statusCode).json(err);
+  }
   const statusCode = err.status || 500;
   let message = err.message || "Internal Server Error";
 

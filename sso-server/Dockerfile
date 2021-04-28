@@ -15,5 +15,8 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+RUN npx sequelize db:migrate
+
+
 EXPOSE 3010
-CMD [ "node", "index.js" ]
+CMD [ "npm", "run", "start" ]

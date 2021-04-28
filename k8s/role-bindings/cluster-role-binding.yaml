@@ -1,0 +1,12 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: aks-cluster-readonly-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: aks-cluster-readonly-role
+subjects:
+- kind: Group
+  #name: groupObjectId
+  name: "b621720b-789d-40c6-89e5-2f21352c740c"  

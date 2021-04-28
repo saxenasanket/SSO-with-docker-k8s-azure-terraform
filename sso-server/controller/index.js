@@ -11,8 +11,6 @@ const re = /(\S+)\s+(\S+)/;
 const AUTH_HEADER = "authorization";
 const BEARER_AUTH_SCHEME = "bearer";
 
-
-
 function parseAuthHeader(hdrValue) {
   if (typeof hdrValue !== "string") {
     return null;
@@ -26,11 +24,9 @@ const fromAuthHeaderWithScheme = function (authScheme) {
   return function (request) {
     let token = null;
 
-    
     if (request.headers[AUTH_HEADER]) {
       const authParams = parseAuthHeader(request.headers[AUTH_HEADER]);
 
-      
       if (authParams && authSchemeLower === authParams.scheme.toLowerCase()) {
         token = authParams.value;
       }
@@ -100,7 +96,6 @@ const fillIntrmTokenCache = (origin, id, intrmToken) => {
 };
 
 const storeApplicationInCache = (origin, id, intrmToken) => {
-  
   if (sessionApp[id] == null) {
     sessionApp[id] = {
       [originAppName[origin]]: true,
@@ -110,12 +105,6 @@ const storeApplicationInCache = (origin, id, intrmToken) => {
     sessionApp[id][originAppName[origin]] = true;
     fillIntrmTokenCache(origin, id, intrmToken);
   }
-  
-    "check 6",
-    { ...sessionApp },
-    { ...sessionUser },
-    { intrmTokenCache }
-  );
 };
 
 const generatePayload = (ssoToken) => {
@@ -139,13 +128,10 @@ const generatePayload = (ssoToken) => {
 };
 
 const verifySsoToken = async (req, res, next) => {
-  
-  // 
+  //
   const appToken = appTokenFromRequest(req);
   const { ssoToken } = req.query;
 
-  
-  
   // if the application token is not present or ssoToken request is invalid
   // if the ssoToken is not present in the cache some is
   // smart.
@@ -162,15 +148,6 @@ const verifySsoToken = async (req, res, next) => {
   const globalSessionToken = intrmTokenCache[ssoToken][0];
   // If the appToken is not equal to token given during the sso app registraion or later stage than invalid
 
-  
-    "check 7",
-    appName,
-    globalSessionToken,
-    intrmTokenCache,
-    appToken,
-    appTokenDB
-  );
-
   if (
     appToken !== appTokenDB[appName] ||
     sessionApp[globalSessionToken][appName] !== true
@@ -180,17 +157,10 @@ const verifySsoToken = async (req, res, next) => {
   // checking if the token passed has been generated
   const payload = generatePayload(ssoToken);
 
-  
-
   const token = await genJwtToken(payload);
 
   // delete the itremCache key for no futher use,
   delete intrmTokenCache[ssoToken];
-
-  
-  
-  
-  
 
   return res.status(200).json({ token });
 };
@@ -200,7 +170,6 @@ const doLogin = (req, res, next) => {
   // like checking with Datebase and all, we are skiping these section
   const { email, password } = req.body;
 
-  
   if (!(userDB[email] && password === userDB[email].password)) {
     return res.status(404).json({ message: "Invalid email and password" });
   }
@@ -211,7 +180,6 @@ const doLogin = (req, res, next) => {
   req.session.user = id;
   sessionUser[id] = email;
 
-  
   if (serviceURL == null) {
     return res.redirect("/");
   }
@@ -219,7 +187,6 @@ const doLogin = (req, res, next) => {
   const intrmid = encodedId();
   storeApplicationInCache(url.origin, id, intrmid);
 
-  
   return res.redirect(`${serviceURL}?ssoToken=${intrmid}`);
 };
 
@@ -228,8 +195,10 @@ const login = (req, res, next) => {
   // login and with sso token.
   // This can also be used to verify the origin from where the request has came in
   // for the redirection
+
+  console.log("test");
   const { serviceURL } = req.query;
-  
+
   // direct access will give the error inside new URL.
   if (serviceURL != null) {
     const url = new URL(serviceURL);
@@ -245,7 +214,6 @@ const login = (req, res, next) => {
   }
   // if global session already has the user directly redirect with the token
   if (req.session.user != null && serviceURL != null) {
-    
     const url = new URL(serviceURL);
     const intrmid = encodedId();
     storeApplicationInCache(url.origin, req.session.user, intrmid);

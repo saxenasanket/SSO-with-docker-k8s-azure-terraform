@@ -1,14 +1,13 @@
-kind: Role
+kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: dev-user-full-access-role
-  namespace: dev
+  name: aks-cluster-readonly-role
 rules:
 - apiGroups: ["", "extensions", "apps"]
-  resources: ["pods"]
-  verbs: ["*"]
+  resources: ["*"]
+  verbs: ["create", "watch"]
 - apiGroups: ["batch"]
   resources:
   - jobs
   - cronjobs
-  verbs: ["*"]
+  verbs: ["get", "list", "watch"]
