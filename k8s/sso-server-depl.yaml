@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: sso-server
-          image: ssoacr1.azurecr.io/sso-server
+          image: ssov2.azurecr.io/sso-server
           ports:
             - containerPort: 3020
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always

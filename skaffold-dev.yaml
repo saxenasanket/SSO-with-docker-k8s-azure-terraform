@@ -10,7 +10,7 @@ build:
     useDockerCLI: true
     concurrency: 10
   artifacts:
-    - image: ssoacr1.azurecr.io/sso-server
+    - image: ssov2.azurecr.io/sso-server
       context: sso-server
     # - image: ssoacr1.azurecr.io/sso-consumer
     #   context: sso-consumer

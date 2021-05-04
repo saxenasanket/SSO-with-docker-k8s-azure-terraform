@@ -11,9 +11,9 @@ resources:
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'f7e02527-08f9-407b-ae1e-4fe1405f6a39'
-  imageRepository: 'saxenasanketsso'
-  containerRegistry: 'ssoacr1.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/nginx/Dockerfile'
+  imageRepository: 'sso-server'
+  containerRegistry: 'ssov2.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/sso-server/Dockerfile'
   tag: '$(Build.BuildId)'
 
   # Agent VM image name

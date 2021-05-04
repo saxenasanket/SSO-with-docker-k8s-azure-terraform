@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: letsencrypt  
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: saxenasanket135@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+
+tls:
+- hosts:
+  - sso.sanketsaxena.in
+  secretName: sso-server-secret           
