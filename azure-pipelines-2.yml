@@ -29,3 +29,6 @@ stages:
         repository: 'sso-server'
         command: 'buildAndPush'
         Dockerfile: $(dockerfileSsoServer)
+        tags: |
+          $(tag)
+          $(Build.SourceVersion)
