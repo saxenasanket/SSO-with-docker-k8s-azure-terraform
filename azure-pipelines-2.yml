@@ -37,7 +37,7 @@ stages:
           command: 'init'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
           backendType: 'azurerm'
-          backendServiceArm: 'ssov2'
+          backendServiceArm: 'ssov2azurerm'
           backendAzureRmResourceGroupName: 'terraform-storage-rg'
           backendAzureRmStorageAccountName: 'terraformstatexlrwdrzsg'
           backendAzureRmContainerName: 'tfstatefiles'
@@ -50,7 +50,7 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
           allowTelemetryCollection: false
 
-          
+
 # Stage-2: Deploy Stages for Dev & QA
 # Deployment-1: Deploy Dev AKS Cluster
 ## Step-1: Define Variables for environments
