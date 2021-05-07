@@ -32,9 +32,9 @@ stages:
         inputs:
           terraformVersion: 'latest'
       - task: TerraformCLI@0
-        displayName: Terraform Init
+        displayName: Terraform Init 
         inputs:
-          command: 'init'
+          command: 'init -reconfigure'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
           backendType: 'azurerm'
           backendServiceArm: 'ssov2azurerm'
