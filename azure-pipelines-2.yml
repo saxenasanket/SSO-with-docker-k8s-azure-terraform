@@ -41,7 +41,7 @@ stages:
           backendAzureRmResourceGroupName: 'terraform-storage-rg'
           backendAzureRmStorageAccountName: 'terraformstatexlrwdrzsg'
           backendAzureRmContainerName: 'tfstatefiles'
-          backendAzureRmKey: 'aks-base.tfstate'
+          backendAzureRmKey: 'dev.terraform.tfstate'
           allowTelemetryCollection: false
       - task: TerraformCLI@0
         displayName: Terraform Validate
