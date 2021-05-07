@@ -34,10 +34,10 @@ stages:
       - task: TerraformCLI@0
         displayName: Terraform Init 
         inputs:
-          command: 'init -reconfigure'
+          command: 'init'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
           backendType: 'azurerm'
-          backendServiceArm: 'ssov2azurerm'
+          backendServiceArm: 'azurerm-conn'
           backendAzureRmResourceGroupName: 'terraform-storage-rg'
           backendAzureRmStorageAccountName: 'terraformstatexlrwdrzsg'
           backendAzureRmContainerName: 'tfstatefiles'
