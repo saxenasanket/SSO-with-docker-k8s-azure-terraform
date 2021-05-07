@@ -18,11 +18,11 @@ variable "resource_group_name" {
 }
 
 # Azure AKS Environment Name
-variable "environment" {
-  type        = string
-  description = "This variable defines the Environment"
-  default     = "dev"
-}
+# variable "environment" {
+#   type        = string
+#   description = "This variable defines the Environment"
+#   default     = "dev"
+# }
 
 
 # AKS Input Variables
