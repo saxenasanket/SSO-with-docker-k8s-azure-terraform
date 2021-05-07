@@ -79,19 +79,19 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     }
   }
 
-  # Windows Profile
-  windows_profile {
-    admin_username = var.windows_admin_username
-    admin_password = var.windows_admin_password
-  }
+  # # Windows Profile
+  # windows_profile {
+  #   admin_username = var.windows_admin_username
+  #   admin_password = var.windows_admin_password
+  # }
 
-  # Linux Profile
-  linux_profile {
-    admin_username = "ubuntu"
-    ssh_key {
-      key_data = file(var.ssh_public_key)
-    }
-  }
+  # # Linux Profile
+  # linux_profile {
+  #   admin_username = "ubuntu"
+  #   ssh_key {
+  #     key_data = file(var.ssh_public_key)
+  #   }
+  # }
 
   # Network Profile
   network_profile {
